@@ -1,18 +1,18 @@
 # unicodeLinebreak
 
 Find where a line of text may be broken, for
-[Meadow](https://github.com/mcdearman/meadow), using the Line Breaking
+[Meadow](https://github.com/meadow-lang/meadow), using the Line Breaking
 Algorithm of [UAX #14](https://www.unicode.org/reports/tr14/).
 
 This package is a port of Rust's
 [`unicode-linebreak`](https://github.com/axelf4/unicode-linebreak) 0.1.5 by
-Axel Forsman, and covers Unicode 15.0.0. [textwrap](https://github.com/mcdearman/Baler)
+Axel Forsman, and covers Unicode 15.0.0. [textwrap](https://github.com/meadow-lang/Baler)
 uses it to find where it may break lines.
 
 ## Install
 
 ```sh
-meadow add mcdearman/UnicodeLinebreak
+meadow add meadow-lang/UnicodeLinebreak
 ```
 
 ## Use
