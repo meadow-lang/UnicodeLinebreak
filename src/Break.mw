@@ -14,8 +14,7 @@ use UnicodeLinebreak.Lookup (classOf, transition, isSafePair)
 
 -- A line break class, as UAX #14 names them.
 @pub data BreakClass
-  = -- Causes a line break after it.
-  Mandatory
+  = Mandatory -- Causes a line break after it.
   -- Causes a line break after it, except between CR and LF.
   | CarriageReturn
   -- Causes a line break after it.
@@ -123,8 +122,7 @@ def allClasses =
 
 -- What kind of break opportunity `linebreaks` found.
 @pub data BreakOpportunity
-  = -- A line must break here.
-  Mandatory
+  = Mandatory -- A line must break here.
   -- A line may end here.
   | Allowed
 
