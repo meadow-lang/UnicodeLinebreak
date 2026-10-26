@@ -30,8 +30,7 @@ fun encode brk =
 
 @cfg(test)
 fun check at bad =
-  if at >= stringByteLength cases
-  then bad
+  if at >= stringByteLength cases then bad
   else
     let len = field at in
     let s = stringSlice cases (at + 3) (at + 3 + len) in

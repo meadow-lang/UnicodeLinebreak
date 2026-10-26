@@ -13,9 +13,8 @@ use Std.Collections.Vector as V
 use UnicodeLinebreak.Lookup (classOf, transition, isSafePair)
 
 -- A line break class, as UAX #14 names them.
-@pub data BreakClass =
-  -- Causes a line break after it.
-  Mandatory
+@pub data BreakClass
+  = Mandatory -- Causes a line break after it.
   -- Causes a line break after it, except between CR and LF.
   | CarriageReturn
   -- Causes a line break after it.
@@ -108,49 +107,13 @@ use BreakClass.*
 -- The classes in the order `Tables.mw` numbers them.
 def allClasses =
   #[
-    Mandatory,
-    CarriageReturn,
-    LineFeed,
-    CombiningMark,
-    NextLine,
-    Surrogate,
-    WordJoiner,
-    ZeroWidthSpace,
-    NonBreakingGlue,
-    Space,
-    ZeroWidthJoiner,
-    BeforeAndAfter,
-    After,
-    Before,
-    Hyphen,
-    Contingent,
-    ClosePunctuation,
-    CloseParenthesis,
-    Exclamation,
-    Inseparable,
-    NonStarter,
-    OpenPunctuation,
-    Quotation,
-    InfixSeparator,
-    Numeric,
-    Postfix,
-    Prefix,
-    Symbol,
-    Ambiguous,
-    Alphabetic,
-    ConditionalJapaneseStarter,
-    EmojiBase,
-    EmojiModifier,
-    HangulLvSyllable,
-    HangulLvtSyllable,
-    HebrewLetter,
-    Ideographic,
-    HangulLJamo,
-    HangulVJamo,
-    HangulTJamo,
-    RegionalIndicator,
-    ComplexContext,
-    Unknown
+    Mandatory, CarriageReturn, LineFeed, CombiningMark, NextLine, Surrogate, WordJoiner,
+    ZeroWidthSpace, NonBreakingGlue, Space, ZeroWidthJoiner, BeforeAndAfter, After, Before, Hyphen,
+    Contingent, ClosePunctuation, CloseParenthesis, Exclamation, Inseparable, NonStarter,
+    OpenPunctuation, Quotation, InfixSeparator, Numeric, Postfix, Prefix, Symbol, Ambiguous,
+    Alphabetic, ConditionalJapaneseStarter, EmojiBase, EmojiModifier, HangulLvSyllable,
+    HangulLvtSyllable, HebrewLetter, Ideographic, HangulLJamo, HangulVJamo, HangulTJamo,
+    RegionalIndicator, ComplexContext, Unknown
   ]
 
 -- The line break class of the code point `cp`. Like the crate's, it takes any
@@ -158,9 +121,8 @@ def allClasses =
 @pub fun breakProperty cp = arrayGet allClasses (classOf cp)
 
 -- What kind of break opportunity `linebreaks` found.
-@pub data BreakOpportunity =
-  -- A line must break here.
-  Mandatory
+@pub data BreakOpportunity
+  = Mandatory -- A line must break here.
   -- A line may end here.
   | Allowed
 
@@ -169,14 +131,7 @@ def zwjClass = 10
 def eot = 43
 def sot = 44
 
-fun utf8Len cp =
-  if cp < 0x80
-  then 1
-  else if cp < 0x800
-  then 2
-  else if cp < 0x10000
-  then 3
-  else 4
+fun utf8Len cp = if cp < 0x80 then 1 else if cp < 0x800 then 2 else if cp < 0x10000 then 3 else 4
 
 -- One step: the entry for `state` meeting `cls`, what it says about the break
 -- before, and the next state.
@@ -189,9 +144,7 @@ fun scan chars i at state afterZwj out =
   let isBreak = bitAnd val 128 != 0 and (not afterZwj or mandatory) in
   let kind = if mandatory then BreakOpportunity.Mandatory else BreakOpportunity.Allowed in
   let out2 = if isBreak then V.pushBack out (at, kind) else out in
-  if done
-  then out2
-  else scan chars (i + 1) (at + utf8Len cp) (bitAnd val 63) (cls == zwjClass) out2
+  if done then out2 else scan chars (i + 1) (at + utf8Len cp) (bitAnd val 63) (cls == zwjClass) out2
 
 -- The line break opportunities in `s`: the byte offset of the character after
 -- each break, and whether the break is mandatory. The end of the text is
@@ -201,20 +154,17 @@ fun scan chars i at state afterZwj out =
 @pub fun linebreaks s = scan (stringToChars s) 0 0 sot False V.empty
 
 fun offsetsFrom chars i at acc =
-  if i >= arrayLen chars
-  then acc
+  if i >= arrayLen chars then acc
   else offsetsFrom chars (i + 1) (at + utf8Len (charCode (arrayGet chars i))) (V.pushBack acc at)
 
 -- From the last pair of characters back, the first that is safe to resume
 -- from; then where the character before it starts.
 fun safeFrom chars offsets k =
-  if k < 0
-  then 0
+  if k < 0 then 0
   else
     let a = classOf (charCode (arrayGet chars k)) in
     let b = classOf (charCode (arrayGet chars (k + 1))) in
-    if isSafePair a b
-    then (if k > 0 then V.getOr 0 offsets (k - 1) else 0)
+    if isSafePair a b then (if k > 0 then V.getOr 0 offsets (k - 1) else 0)
     else safeFrom chars offsets (k - 1)
 
 -- `s` divided at the last place where the breaks that follow no longer depend

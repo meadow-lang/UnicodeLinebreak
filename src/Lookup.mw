@@ -19,15 +19,12 @@ fun codePoint s i = pair s i * 4096 + pair s (i + 2)
 
 -- Where the record holding `cp` starts, or `0 - 1` when none does.
 fun searchFrom cp lo hi =
-  if lo >= hi
-  then 0 - 1
+  if lo >= hi then 0 - 1
   else
     let mid = (lo + hi) / 2 in
     let at = mid * 9 in
-    if cp < codePoint classes at
-    then searchFrom cp lo mid
-    else if cp > codePoint classes (at + 4)
-    then searchFrom cp (mid + 1) hi
+    if cp < codePoint classes at then searchFrom cp lo mid
+    else if cp > codePoint classes (at + 4) then searchFrom cp (mid + 1) hi
     else at
 
 -- The class numbered as `Tables.mw` lists them; 42 is Unknown.
